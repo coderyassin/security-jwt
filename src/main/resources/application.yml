@@ -24,3 +24,13 @@ management:
     web:
       exposure:
         include: "*"
+application:
+  security:
+    jwt:
+      algorithm: HS256
+      secret_key: 586B633834416E396D7436753879382F423F4428482B4C6250655367566B5970
+      expiration: 1200000
+      not_before: 60000
+      refresh_token:
+        expiration: 1296000000
+

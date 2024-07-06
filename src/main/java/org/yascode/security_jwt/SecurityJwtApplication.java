@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 @SpringBootApplication
-public class SecurityJwtApplication implements CommandLineRunner {
+public class SecurityJwtApplication /*implements CommandLineRunner*/ {
 
 	private final AuthorityRepository authorityRepository;
 	private final RoleRepository roleRepository;
@@ -34,7 +34,7 @@ public class SecurityJwtApplication implements CommandLineRunner {
 		SpringApplication.run(SecurityJwtApplication.class, args);
 	}
 
-	@Override
+	//@Override
 	public void run(String... args) throws Exception {
 		Authority authority1 = Authority.builder()
 									   .authority(AuthorityEnum.READ_PRIVILEGE)
