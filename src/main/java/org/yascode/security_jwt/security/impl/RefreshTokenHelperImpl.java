@@ -1,6 +1,7 @@
 package org.yascode.security_jwt.security.impl;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.yascode.security_jwt.entity.RefreshToken;
 import org.yascode.security_jwt.entity.User;
@@ -18,6 +19,8 @@ public class RefreshTokenHelperImpl implements RefreshTokenHelper {
     private final RefreshTokenRepository refreshTokenRepository;
     @Value("${application.security.jwt.refresh_token.expiration}")
     private long refreshExpiration;
+    @Value("${application.security.jwt.refresh_token.cookie_name}")
+    private String refreshTokenName;
 
     public RefreshTokenHelperImpl(UserRepository userRepository,
                                   RefreshTokenRepository refreshTokenRepository) {
@@ -35,5 +38,16 @@ public class RefreshTokenHelperImpl implements RefreshTokenHelper {
                 .revoked(false)
                 .build();
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    @Override
+    public ResponseCookie generateRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from(refreshTokenName, refreshToken)
+                .path("/")
+                .maxAge(refreshExpiration/1000) // 15 days in seconds
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .build();
     }
 }

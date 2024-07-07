@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.yascode.security_jwt.security.payload.request.AuthenticationRequest;
 import org.yascode.security_jwt.security.payload.request.RegisterRequest;
-import org.yascode.security_jwt.security.payload.response.AuthenticationResponse;
 
 public interface AuthenticationApi {
     @PostMapping("/register")
-    ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request);
+    ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest);
+    @PostMapping("/authenticate")
+    ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest);
 }

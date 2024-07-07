@@ -12,11 +12,13 @@ import org.yascode.security_jwt.repository.AuthorityRepository;
 import org.yascode.security_jwt.repository.RoleRepository;
 import org.yascode.security_jwt.repository.UserRepository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @SpringBootApplication
-public class SecurityJwtApplication /*implements CommandLineRunner*/ {
+public class SecurityJwtApplication implements CommandLineRunner {
 
 	private final AuthorityRepository authorityRepository;
 	private final RoleRepository roleRepository;
@@ -34,21 +36,68 @@ public class SecurityJwtApplication /*implements CommandLineRunner*/ {
 		SpringApplication.run(SecurityJwtApplication.class, args);
 	}
 
-	//@Override
+	@Override
 	public void run(String... args) throws Exception {
-		Authority authority1 = Authority.builder()
-									   .authority(AuthorityEnum.READ_PRIVILEGE)
+		/*Authority authority1 = Authority.builder()
+									   .authority(AuthorityEnum.ROLE_USER)
 									   .build();
 
 		Authority authority2 = Authority.builder()
-				.authority(AuthorityEnum.UPDATE_PRIVILEGE)
+				.authority(AuthorityEnum.ROLE_ADMIN)
 				.build();
 
-		authorityRepository.saveAll(List.of(authority1, authority2));
+		Authority authority3 = Authority.builder()
+				.authority(AuthorityEnum.ROLE_SUPER_ADMIN)
+				.build();
 
-		Role role1 = Role.builder()
-				.role(RoleEnum.ADMIN)
-				.authorities(Set.of(authority1, authority2))
+		authorityRepository.saveAll(List.of(authority1, authority2, authority3));*/
+
+		/*roleRepository.findByRoleEnum(Set.of(RoleEnum.SUPER_ADMIN))
+				.stream()
+				.findFirst()
+				.ifPresent(role -> authorityRepository.findByAuthority(AuthorityEnum.ROLE_SUPER_ADMIN)
+						.ifPresent(authority -> {
+							Set<Authority> authorities = role.getAuthorities();
+							authorities.addAll(List.of(authority));
+							role.setAuthorities(authorities);
+							roleRepository.save(role);
+						}));
+
+		roleRepository.findByRoleEnum(Set.of(RoleEnum.ADMIN))
+				.stream()
+				.findFirst()
+				.ifPresent(role -> authorityRepository.findByAuthority(AuthorityEnum.ROLE_ADMIN)
+                        .ifPresent(authority -> {
+                            Set<Authority> authorities = role.getAuthorities();
+							authorities.addAll(List.of(authority));
+                            role.setAuthorities(authorities);
+                            roleRepository.save(role);
+                        }));
+
+		roleRepository.findByRoleEnum(Set.of(RoleEnum.USER))
+				.stream()
+				.findFirst()
+				.ifPresent(role -> authorityRepository.findByAuthority(AuthorityEnum.ROLE_USER)
+						.ifPresent(authority -> {
+							Set<Authority> authorities = role.getAuthorities();
+							authorities.addAll(List.of(authority));
+							role.setAuthorities(authorities);
+							roleRepository.save(role);
+						}));*/
+
+		/*Optional.ofNullable(authorityRepository.findAll())
+				.ifPresent(authorities -> {
+					Role role = Role.builder()
+							.role(RoleEnum.SUPER_ADMIN)
+							.authorities(new HashSet<>(authorities))
+							.build();
+
+					roleRepository.save(role);
+				});*/
+
+		/*Role role1 = Role.builder()
+				.role(RoleEnum.USER)
+				.authorities(Set.of(authority))
 				.build();
 
 		roleRepository.save(role1);
@@ -59,6 +108,6 @@ public class SecurityJwtApplication /*implements CommandLineRunner*/ {
 				.roles(Set.of(role1))
 				.build();
 
-		userRepository.save(user1);
+		userRepository.save(user1);*/
 	}
 }
