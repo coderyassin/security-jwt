@@ -12,10 +12,8 @@ import org.yascode.security_jwt.repository.AuthorityRepository;
 import org.yascode.security_jwt.repository.RoleRepository;
 import org.yascode.security_jwt.repository.UserRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class SecurityJwtApplication implements CommandLineRunner {
@@ -38,6 +36,42 @@ public class SecurityJwtApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		/*for (AuthorityEnum authorityEnum : AuthorityEnum.values()) {
+			Authority authority = Authority.builder()
+					.authority(authorityEnum)
+					.build();
+			authorityRepository.save(authority);
+		}*/
+
+		/*for (RoleEnum roleEnum : RoleEnum.values()) {
+			Role role = Role.builder()
+					.role(roleEnum)
+					.build();
+			roleRepository.save(role);
+		}*/
+
+		/*Role role = roleRepository.findByRoleEnum(Collections.singleton(RoleEnum.SUPER_ADMIN))
+				.stream()
+				.findFirst()
+				.get();
+
+		List<Authority> authorities = authorityRepository.findAll();
+
+		Optional.of(role)
+				.ifPresent(_role -> {
+					Set<Authority> authoritiesList = authorities.stream()
+							.filter(authority ->
+									authority.getAuthority().equals(AuthorityEnum.ROLE_SUPER_ADMIN.name()) ||
+									authority.getAuthority().equals(AuthorityEnum.READ_PRIVILEGE.name()) ||
+									authority.getAuthority().equals(AuthorityEnum.UPDATE_PRIVILEGE.name()) ||
+									authority.getAuthority().equals(AuthorityEnum.WRITE_PRIVILEGE.name()) ||
+									authority.getAuthority().equals(AuthorityEnum.DELETE_PRIVILEGE.name()))
+							.collect(Collectors.toSet());
+					_role.setAuthorities(authoritiesList);
+					roleRepository.save(_role);
+				});*/
+
+
 		/*Authority authority1 = Authority.builder()
 									   .authority(AuthorityEnum.ROLE_USER)
 									   .build();

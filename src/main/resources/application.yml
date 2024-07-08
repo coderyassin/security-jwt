@@ -4,10 +4,14 @@ spring:
   application:
     name: security-jwt
   datasource:
-    url: jdbc:mysql://localhost:3307/security_jwt
-    username: yascode
-    password: yascode
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    #url: jdbc:mysql://localhost:3307/security_jwt
+    url: jdbc:postgresql://localhost:5432/security_jwt
+    #username: yascode
+    username: postgres
+    #password: yascode
+    password: YassMel97
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,6 +19,7 @@ spring:
     properties:
       hibernate:
         use_sql_comments: true
+    #database-platform: org.hibernate.dialect.PostgreSQLDialect
 logging:
   level:
     org.hibernate.SQL: DEBUG
@@ -29,8 +34,8 @@ application:
     jwt:
       algorithm: HS256
       secret_key: 586B633834416E396D7436753879382F423F4428482B4C6250655367566B5970
-      expiration: 1200000
-      not_before: 60000
+      expiration: 240000
+      not_before: 1200
       cookie_name: jwt_cookie
       refresh_token:
         expiration: 1296000000

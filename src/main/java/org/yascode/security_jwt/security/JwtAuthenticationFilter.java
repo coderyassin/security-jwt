@@ -52,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         BiPredicate<String, String> jwtPresentInHeader =
-                (token, header) -> Objects.isNull(token) && header.startsWith("Bearer ");
+                (token, header) -> Objects.nonNull(header) && header.startsWith("Bearer ");
 
         if(jwtPresentInHeader.test(jwt, authorizationHeader)) {
             jwt = authorizationHeader.substring(7);
