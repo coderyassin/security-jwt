@@ -20,11 +20,17 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider customAuthenticationProvider;
+    private final Http401UnauthorizedEntryPoint unauthorizedEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          AuthenticationProvider customAuthenticationProvider) {
+                          AuthenticationProvider customAuthenticationProvider,
+                          Http401UnauthorizedEntryPoint unauthorizedEntryPoint,
+                          CustomAccessDeniedHandler accessDeniedHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customAuthenticationProvider = customAuthenticationProvider;
+        this.unauthorizedEntryPoint = unauthorizedEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -36,7 +42,11 @@ public class SecurityConfig {
                         anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(customAuthenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling ->
+                    exceptionHandling.authenticationEntryPoint(unauthorizedEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler)
+                );
         return http.build();
     }
 }

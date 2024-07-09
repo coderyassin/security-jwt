@@ -1,17 +1,20 @@
 server:
-  port: 9999
+  port: 6689
 spring:
   application:
     name: security-jwt
   datasource:
     #url: jdbc:mysql://localhost:3307/security_jwt
-    url: jdbc:postgresql://localhost:5432/security_jwt
+    #url: jdbc:postgresql://localhost:5432/security_jwt
+    url: jdbc:mysql://localhost/security_jwt?autoReconnect=true
     #username: yascode
-    username: postgres
+    #username: postgres
+    username: config
     #password: yascode
-    password: YassMel97
-    #driver-class-name: com.mysql.cj.jdbc.Driver
-    driver-class-name: org.postgresql.Driver
+    #password: YassMel97
+    password: config
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
