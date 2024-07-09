@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 
+import static org.yascode.security_jwt.util.Constants.JWT_PREFIX;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtHelper jwtHelper;
@@ -40,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if(httpRequest.getRequestURI().contains("/auth"))
                         return true;
                     if(Objects.isNull(token)) {
-                        if(Objects.isNull(header) || !header.startsWith("Bearer "))
+                        if(Objects.isNull(header) || !header.startsWith(JWT_PREFIX))
                             return true;
                     }
                     return false;
@@ -52,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         BiPredicate<String, String> jwtPresentInHeader =
-                (token, header) -> Objects.nonNull(header) && header.startsWith("Bearer ");
+                (token, header) -> Objects.nonNull(header) && header.startsWith(JWT_PREFIX);
 
         if(jwtPresentInHeader.test(jwt, authorizationHeader)) {
             jwt = authorizationHeader.substring(7);

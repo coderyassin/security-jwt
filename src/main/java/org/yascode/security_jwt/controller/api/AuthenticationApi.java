@@ -1,7 +1,10 @@
 package org.yascode.security_jwt.controller.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.yascode.security_jwt.security.payload.request.AuthenticationRequest;
@@ -15,4 +18,10 @@ public interface AuthenticationApi {
     ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest);
     @PostMapping("/refresh-token")
     ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest);
+    @PostMapping("/refresh-token-cookie")
+    ResponseEntity<?> refreshTokenCookie(HttpServletRequest httpServletRequest);
+    @GetMapping("/info")
+    Authentication getAuthentication(@RequestBody AuthenticationRequest authenticationRequest);
+    @PostMapping("/logout")
+    ResponseEntity<?> logout(HttpServletRequest httpServletRequest);
 }

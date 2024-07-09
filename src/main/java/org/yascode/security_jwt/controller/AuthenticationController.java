@@ -1,7 +1,11 @@
 package org.yascode.security_jwt.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yascode.security_jwt.controller.api.AuthenticationApi;
@@ -44,5 +48,25 @@ public class AuthenticationController implements AuthenticationApi {
     public ResponseEntity<?> refreshToken(RefreshTokenRequest refreshTokenRequest) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(refreshTokenService.generateNewToken(refreshTokenRequest));
+    }
+
+    @Override
+    public ResponseEntity<?> refreshTokenCookie(HttpServletRequest httpServletRequest) {
+        ResponseCookie newJwtCookie = refreshTokenService.refreshTokenCookie(httpServletRequest);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, newJwtCookie.toString())
+                .build();
+    }
+
+    @Override
+    public Authentication getAuthentication(AuthenticationRequest authenticationRequest) {
+        return authenticationService.getAuthentication(authenticationRequest);
+    }
+
+    @Override
+    public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok()
+                .headers(authenticationService.logout(httpServletRequest))
+                .build();
     }
 }

@@ -13,4 +13,5 @@ public interface JwtHelper {
     String getJwtFromCookies(HttpServletRequest request);
     String extractUsername(String token);
     boolean isTokenValid(String token, UserDetails userDetails);
+    ResponseCookie getCleanJwtCookie();
 }

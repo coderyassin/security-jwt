@@ -83,6 +83,15 @@ public class JwtHelperImpl implements JwtHelper {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
+    @Override
+    public ResponseCookie getCleanJwtCookie() {
+        return ResponseCookie.from(jwtCookieName, "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }

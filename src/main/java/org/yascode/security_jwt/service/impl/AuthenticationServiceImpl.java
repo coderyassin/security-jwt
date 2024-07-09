@@ -1,8 +1,11 @@
 package org.yascode.security_jwt.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import org.yascode.security_jwt.security.payload.request.AuthenticationRequest;
 import org.yascode.security_jwt.security.payload.request.RegisterRequest;
 import org.yascode.security_jwt.security.payload.response.AuthenticationResponse;
 import org.yascode.security_jwt.service.AuthenticationService;
+import org.yascode.security_jwt.service.RefreshTokenService;
 
 import java.util.List;
 import java.util.Map;
@@ -35,19 +39,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtHelper jwtHelper;
     private final RefreshTokenHelper refreshTokenHelper;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
                                      UserRepository userRepository,
                                      RoleRepository roleRepository,
                                      PasswordEncoder passwordEncoder,
                                      JwtHelper jwtHelper,
-                                     RefreshTokenHelper refreshTokenHelper) {
+                                     RefreshTokenHelper refreshTokenHelper,
+                                     RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtHelper = jwtHelper;
         this.refreshTokenHelper = refreshTokenHelper;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -142,5 +149,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .headers(headers)
                 .body(authenticationResponse)
                 .build();
+    }
+
+    @Override
+    public Authentication getAuthentication(AuthenticationRequest authenticationRequest) {
+        return authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
+                                                                    authenticationRequest.getPassword()));
+    }
+
+    @Override
+    public HttpHeaders logout(HttpServletRequest httpServletRequest) {
+        String refreshToken = refreshTokenService.getRefreshTokenFromCookies(httpServletRequest);
+        if(Objects.nonNull(refreshToken)) {
+            refreshTokenService.deleteByToken(refreshToken);
+        }
+        ResponseCookie jwtCookie = jwtHelper.getCleanJwtCookie();
+        ResponseCookie refreshTokenCookie = refreshTokenService.getCleanRefreshTokenCookie();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.putAll(Map.of(HttpHeaders.SET_COOKIE, List.of(
+                jwtCookie.toString(),
+                refreshTokenCookie.toString())));
+
+        return headers;
     }
 }

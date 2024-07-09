@@ -1,8 +1,13 @@
 package org.yascode.security_jwt.service.impl;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 import org.yascode.security_jwt.entity.RefreshToken;
 import org.yascode.security_jwt.entity.Role;
 import org.yascode.security_jwt.entity.User;
@@ -25,6 +30,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final Log logger = LogFactory.getLog(this.getClass());
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtHelper jwtHelper;
+    @Value("${application.security.jwt.refresh_token.cookie_name}")
+    private String refreshTokenName;
 
     public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository,
                                    JwtHelper jwtHelper) {
@@ -53,12 +60,40 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .build();
     }
 
+    @Override
+    public String getRefreshTokenFromCookies(HttpServletRequest httpServletRequest) {
+        Cookie cookie = WebUtils.getCookie(httpServletRequest, refreshTokenName);
+        return Objects.nonNull(cookie) ? cookie.getValue() : "";
+    }
+
+    @Override
+    public ResponseCookie refreshTokenCookie(HttpServletRequest httpServletRequest) {
+        String refreshToken = getRefreshTokenFromCookies(httpServletRequest);
+        RefreshTokenResponse refreshTokenResponse =
+                generateNewToken(RefreshTokenRequest.builder().refreshToken(refreshToken).build());
+        return jwtHelper.generateJwtCookie(refreshTokenResponse.getAccessToken());
+    }
+
+    @Override
+    public void deleteByToken(String refreshToken) {
+        refreshTokenRepository.findByToken(refreshToken).ifPresent(refreshTokenRepository::delete);
+    }
+
+    @Override
+    public ResponseCookie getCleanRefreshTokenCookie() {
+        return ResponseCookie.from(refreshTokenName, "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+    }
+
     public RefreshToken verifyExpiration(RefreshToken refreshToken) {
         if(Objects.nonNull(refreshToken)) {
             if(refreshToken.getExpiryDate().compareTo(Instant.now()) > 0 ) {
                 return refreshToken;
             }
-            //refreshTokenRepository.delete(refreshToken);
+            refreshTokenRepository.delete(refreshToken);
             throw new TokenException(refreshToken.getToken(),
                     "Refresh token was expired. Please make a new authentication request");
         }
