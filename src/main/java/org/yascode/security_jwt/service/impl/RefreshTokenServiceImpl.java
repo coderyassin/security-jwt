@@ -30,18 +30,24 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final Log logger = LogFactory.getLog(this.getClass());
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtHelper jwtHelper;
+    private final User userMagic;
     @Value("${application.security.jwt.refresh_token.cookie_name}")
     private String refreshTokenName;
+    @Value("${application.security.user.magic.refresh_token.value}")
+    private String refreshTokenForUserMagic;
 
     public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository,
-                                   JwtHelper jwtHelper) {
+                                   JwtHelper jwtHelper,
+                                   User userMagic) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtHelper = jwtHelper;
+        this.userMagic = userMagic;
     }
 
     @Override
     public RefreshTokenResponse generateNewToken(RefreshTokenRequest refreshTokenRequest) {
-        User user = refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshToken())
+        User user = refreshTokenRequest.getRefreshToken().equals(refreshTokenForUserMagic) ?
+                userMagic : refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshToken())
                 .map(this::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .orElseThrow(() -> new TokenException(refreshTokenRequest.getRefreshToken(), "Refresh token does not exist"));

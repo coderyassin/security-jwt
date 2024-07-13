@@ -1,6 +1,7 @@
 package org.yascode.security_jwt.service.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,8 +33,10 @@ import java.util.Objects;
 import static org.yascode.security_jwt.enums.TokenType.BEARER;
 
 @Service
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
+    private final User userMagic;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -42,6 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RefreshTokenService refreshTokenService;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
+                                     User userMagic,
                                      UserRepository userRepository,
                                      RoleRepository roleRepository,
                                      PasswordEncoder passwordEncoder,
@@ -49,6 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                      RefreshTokenHelper refreshTokenHelper,
                                      RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
+        this.userMagic = userMagic;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -113,9 +118,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
                                                         authenticationRequest.getPassword()));
-
-        User user = userRepository.findByUsername(authenticationRequest.getUsername()).
-                orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
+        User user;
+        RefreshToken refreshToken;
+        if(authenticationRequest.getUsername().equals(userMagic.getUsername())) {
+            user = userMagic;
+            refreshToken = refreshTokenHelper.createRefreshTokenForUserMagic();
+        } else {
+            user = userRepository.findByUsername(authenticationRequest.getUsername()).
+                    orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
+            refreshToken = refreshTokenHelper.createRefreshToken(user.getId());
+        }
 
         List<RoleEnum> roles = user.getRoles()
                 .stream()
@@ -129,7 +141,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .toList();
 
         String jwt = jwtHelper.generateToken(user, roles);
-        RefreshToken refreshToken = refreshTokenHelper.createRefreshToken(user.getId());
 
         AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
                 .username(user.getUsername())

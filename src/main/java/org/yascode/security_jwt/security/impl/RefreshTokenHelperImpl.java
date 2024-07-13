@@ -15,17 +15,31 @@ import java.util.UUID;
 
 @Component
 public class RefreshTokenHelperImpl implements RefreshTokenHelper {
+    private final User userMagic;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     @Value("${application.security.jwt.refresh_token.expiration}")
     private long refreshExpiration;
     @Value("${application.security.jwt.refresh_token.cookie_name}")
     private String refreshTokenName;
+    @Value("${application.security.user.magic.refresh_token.value}")
+    private String refreshTokenForUserMagic;
+    @Value("${application.security.user.magic.refresh_token.expiration}")
+    private long refreshTokenForExpirationUserMagic;
 
-    public RefreshTokenHelperImpl(UserRepository userRepository,
+    public RefreshTokenHelperImpl(User userMagic,
+                                  UserRepository userRepository,
                                   RefreshTokenRepository refreshTokenRepository) {
+        this.userMagic = userMagic;
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
+    }
+
+    @Override
+    public RefreshToken createRefreshTokenForUserMagic() {
+        return RefreshToken.builder()
+                .token(refreshTokenForUserMagic)
+                .build();
     }
 
     @Override

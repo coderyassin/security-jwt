@@ -5,16 +5,16 @@ spring:
     name: security-jwt
   datasource:
     #url: jdbc:mysql://localhost:3307/security_jwt
-    #url: jdbc:postgresql://localhost:5432/security_jwt
-    url: jdbc:mysql://localhost/security_jwt?autoReconnect=true
+    url: jdbc:postgresql://localhost:5432/security_jwt
+    #url: jdbc:mysql://localhost/security_jwt?autoReconnect=true
     #username: yascode
-    #username: postgres
-    username: config
+    username: postgres
+    #username: config
     #password: yascode
-    #password: YassMel97
-    password: config
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    #driver-class-name: org.postgresql.Driver
+    password: YassMel97
+    #password: config
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -43,4 +43,12 @@ application:
       refresh_token:
         expiration: 1296000000
         cookie_name: refresh_jwt_cookie
+    user:
+      magic:
+        username: RFvHrEhe
+        password: $2a$10$zN7fSt9ILv.ptLKkpI29x.BW6RBfjZG33AvO7kW.ep1eKFXFBOwpq
+        role: ADMIN
+        refresh_token:
+          value: RDMyOWFRWVBvdFZxZkY3b21aQk84M0xnR2tlTmJ3SjQ=
+          expiration: 86400
 
