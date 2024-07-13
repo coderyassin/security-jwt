@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 public interface AuthorizationApi {
     @GetMapping("/admin/resource")
-    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE') and hasAnyRole('ADMIN', 'SUPER_ADMIN', 'MAGIC')")
     ResponseEntity<?> sayHelloWithRoleAdminAndReadAuthority();
 
     @DeleteMapping("/admin/resource")
-    @PreAuthorize("hasAuthority('DELETE_PRIVILEGE') and hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_PRIVILEGE') and hasAnyRole('SUPER_ADMIN', 'MAGIC')")
     ResponseEntity<?> sayHelloWithRoleAdminAndDeleteAuthority();
 }

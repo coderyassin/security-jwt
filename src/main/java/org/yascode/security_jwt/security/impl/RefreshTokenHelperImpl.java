@@ -24,8 +24,6 @@ public class RefreshTokenHelperImpl implements RefreshTokenHelper {
     private String refreshTokenName;
     @Value("${application.security.user.magic.refresh_token.value}")
     private String refreshTokenForUserMagic;
-    @Value("${application.security.user.magic.refresh_token.expiration}")
-    private long refreshTokenForExpirationUserMagic;
 
     public RefreshTokenHelperImpl(User userMagic,
                                   UserRepository userRepository,

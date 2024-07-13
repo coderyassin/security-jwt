@@ -47,8 +47,7 @@ application:
       magic:
         username: RFvHrEhe
         password: $2a$10$zN7fSt9ILv.ptLKkpI29x.BW6RBfjZG33AvO7kW.ep1eKFXFBOwpq
-        role: ADMIN
+        role: MAGIC
         refresh_token:
           value: RDMyOWFRWVBvdFZxZkY3b21aQk84M0xnR2tlTmJ3SjQ=
-          expiration: 86400
 

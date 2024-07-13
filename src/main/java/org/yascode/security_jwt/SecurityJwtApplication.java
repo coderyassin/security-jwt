@@ -36,6 +36,21 @@ public class SecurityJwtApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		/*Authority authority = Authority.builder()
+				.authority(AuthorityEnum.ROLE_MAGIC)
+				.build();
+
+		roleRepository.findByRoleEnum(Set.of(RoleEnum.MAGIC)).forEach(role -> {
+			Authority read = authorityRepository.findByAuthority(AuthorityEnum.READ_PRIVILEGE).get();
+			Authority write = authorityRepository.findByAuthority(AuthorityEnum.WRITE_PRIVILEGE).get();
+			Authority update = authorityRepository.findByAuthority(AuthorityEnum.UPDATE_PRIVILEGE).get();
+			Authority delete = authorityRepository.findByAuthority(AuthorityEnum.DELETE_PRIVILEGE).get();
+
+			Set<Authority> authorities = Set.of(authority, read, write, update, delete);
+			role.setAuthorities(authorities);
+			roleRepository.save(role);
+		});*/
+
 		/*for (AuthorityEnum authorityEnum : AuthorityEnum.values()) {
 			Authority authority = Authority.builder()
 					.authority(authorityEnum)
