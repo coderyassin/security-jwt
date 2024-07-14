@@ -1,4 +1,4 @@
-package org.yascode.security_jwt.security;
+package org.yascode.security_jwt.security.filter;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.yascode.security_jwt.entity.User;
 import org.yascode.security_jwt.functionalInterface.TriPredicate;
+import org.yascode.security_jwt.security.JwtHelper;
 
 import java.io.IOException;
 import java.util.Objects;

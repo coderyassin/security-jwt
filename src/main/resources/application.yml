@@ -27,6 +27,7 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
+    org.springframework.security: DEBUG
 management:
   endpoints:
     web:
