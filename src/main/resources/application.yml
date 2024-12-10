@@ -1,20 +1,24 @@
 server:
   port: 6689
+  env:
+    address: localhost
+    request-protocol: http
+    description: dev
 spring:
   application:
     name: security-jwt
   datasource:
+    url: jdbc:postgresql://192.168.214.108:5432/banking_db
+    username: banking
+    password: 834xQqztIANjmqI7R2eBmgUT
+    driver-class-name: org.postgresql.Driver
     #url: jdbc:mysql://localhost:3307/security_jwt
-    url: jdbc:postgresql://localhost:5432/security_jwt
-    #url: jdbc:mysql://localhost/security_jwt?autoReconnect=true
+    #url: jdbc:postgresql://localhost:5432/security_jwt
     #username: yascode
-    username: postgres
     #username: config
     #password: yascode
-    password: YassMel97
     #password: config
     #driver-class-name: com.mysql.cj.jdbc.Driver
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,12 +26,12 @@ spring:
     properties:
       hibernate:
         use_sql_comments: true
-    #database-platform: org.hibernate.dialect.PostgreSQLDialect
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
     org.springframework.security: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation: TRACE
 management:
   endpoints:
     web:
@@ -51,4 +55,16 @@ application:
         role: MAGIC
         refresh_token:
           value: RDMyOWFRWVBvdFZxZkY3b21aQk84M0xnR2tlTmJ3SjQ=
+contact:
+  name: Yassin MELLOUKI
+  email: yassin.mellouki.j@gmail.com
+info:
+  title: Bank account management
+  version: 0.0.1-SNAPSHOT
+  description: Application for managing bank accounts
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 

@@ -29,6 +29,8 @@ import org.yascode.security_jwt.service.RefreshTokenService;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.yascode.security_jwt.enums.TokenType.BEARER;
 
@@ -81,11 +83,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                    .map(Role::getRole)
                                    .toList();
 
-        List<AuthorityEnum> authorities = user.getAuthorities()
+        Set<AuthorityEnum> authorities = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(AuthorityEnum::valueOf)
-                .toList();
+                .collect(Collectors.toSet());
 
         String tokenJwt = this.jwtHelper.generateToken(user, roles);
         RefreshToken refreshToken = null;
@@ -96,7 +98,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
                 .username(user.getUsername())
                 .roles(roles)
-                .authorities(authorities)
+                .authorities(authorities.stream().toList())
                 .accessToken(tokenJwt)
                 .refreshToken(Objects.nonNull(refreshToken) ? refreshToken.getToken() : null)
                 .tokenType(BEARER)

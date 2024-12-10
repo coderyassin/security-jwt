@@ -1,12 +1,10 @@
 package org.yascode.security_jwt.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.yascode.security_jwt.enums.RoleEnum;
 import org.yascode.security_jwt.listener.RoleListener;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,8 +25,4 @@ public class Role extends AbstractEntity {
     @JoinTable(joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_id")})
     private Set<Authority> authorities = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
-    @JsonIgnore
-    private Set<User> users = new HashSet<>();
 }

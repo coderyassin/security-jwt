@@ -18,6 +18,7 @@ import org.yascode.security_jwt.functionalInterface.TriPredicate;
 import org.yascode.security_jwt.security.JwtHelper;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 
@@ -46,8 +47,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         TriPredicate<String, String, HttpServletRequest> moveToNextFilter =
                 (token, header, httpRequest) -> {
-                    if(httpRequest.getRequestURI().contains("/auth"))
+                    boolean anyMatch = List.of("/auth", "/swagger-ui/", "/swagger-ui.html", "/v3/api-docs", "/favicon.ico")
+                            .stream()
+                            .anyMatch(uri -> httpRequest.getRequestURI().contains(uri));
+
+                    if(anyMatch) {
                         return true;
+                    }
+
                     if(Objects.isNull(token)) {
                         if(Objects.isNull(header) || !header.startsWith(JWT_PREFIX))
                             return true;

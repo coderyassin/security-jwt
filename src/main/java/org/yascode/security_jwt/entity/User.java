@@ -39,7 +39,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<Authority> authorities = new ArrayList<>();
+        Set<Authority> authorities = new HashSet<>();
         this.roles.stream()
                 .map(Role::getAuthorities)
                 .flatMap(Collection::stream)
