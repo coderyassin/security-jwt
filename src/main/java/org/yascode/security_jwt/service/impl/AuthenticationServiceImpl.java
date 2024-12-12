@@ -11,11 +11,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.yascode.security_jwt.controller.response.StandardResponse;
+import org.yascode.security_jwt.entity.Account;
 import org.yascode.security_jwt.entity.RefreshToken;
 import org.yascode.security_jwt.entity.Role;
 import org.yascode.security_jwt.entity.User;
 import org.yascode.security_jwt.enums.AuthorityEnum;
 import org.yascode.security_jwt.enums.RoleEnum;
+import org.yascode.security_jwt.repository.AccountRepository;
 import org.yascode.security_jwt.repository.RoleRepository;
 import org.yascode.security_jwt.repository.UserRepository;
 import org.yascode.security_jwt.security.JwtHelper;
@@ -40,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final User userMagic;
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtHelper jwtHelper;
@@ -49,6 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
                                      User userMagic,
                                      UserRepository userRepository,
+                                     AccountRepository accountRepository,
                                      RoleRepository roleRepository,
                                      PasswordEncoder passwordEncoder,
                                      JwtHelper jwtHelper,
@@ -57,6 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.authenticationManager = authenticationManager;
         this.userMagic = userMagic;
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtHelper = jwtHelper;
@@ -76,7 +81,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .enabled(true)
                 .build();
 
+        Account account = Account.builder()
+                .user(user)
+                .build();
+
         this.userRepository.save(user);
+        this.accountRepository.save(account);
 
         List<RoleEnum> roles = user.getRoles()
                                    .stream()
