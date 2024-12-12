@@ -1,7 +1,9 @@
 package org.yascode.security_jwt.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.yascode.security_jwt.controller.request.CustomFieldsRequest;
 import org.yascode.security_jwt.entity.CustomField;
 import org.yascode.security_jwt.repository.AccountRepository;
 import org.yascode.security_jwt.repository.CustomFieldRepository;
@@ -21,7 +23,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean assignCustomFields(Long accountId, String fieldKey, String fieldValue) {
+    public boolean assignCustomField(Long accountId, String fieldKey, String fieldValue) {
         AtomicBoolean isAssigned = new AtomicBoolean(false);
         try {
             accountRepository.findById(accountId)
@@ -39,5 +41,13 @@ public class AccountServiceImpl implements AccountService {
             log.error(e.getMessage());
         }
         return isAssigned.get();
+    }
+
+    @Override
+    @Transactional
+    public boolean assignCustomFields(CustomFieldsRequest customFields) {
+        customFields.customFields()
+                .forEach(customField -> assignCustomField(customField.accountId(), customField.fieldKey(), customField.fieldValue()));
+        return true;
     }
 }

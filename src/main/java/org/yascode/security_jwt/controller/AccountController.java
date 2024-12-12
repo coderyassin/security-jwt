@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yascode.security_jwt.controller.api.AccountApi;
 import org.yascode.security_jwt.controller.request.CustomFieldRequest;
+import org.yascode.security_jwt.controller.request.CustomFieldsRequest;
 import org.yascode.security_jwt.service.AccountService;
 
 @RestController
@@ -17,9 +18,14 @@ public class AccountController implements AccountApi {
     }
 
     @Override
-    public ResponseEntity<?> assignCustomFields(CustomFieldRequest request) {
-        return ResponseEntity.ok(accountService.assignCustomFields(request.accountId(),
+    public ResponseEntity<?> assignCustomField(CustomFieldRequest request) {
+        return ResponseEntity.ok(accountService.assignCustomField(request.accountId(),
                 request.fieldKey(),
                 request.fieldValue()));
+    }
+
+    @Override
+    public ResponseEntity<?> assignCustomFields(CustomFieldsRequest request) {
+        return ResponseEntity.ok(accountService.assignCustomFields(request));
     }
 }
