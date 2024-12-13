@@ -45,6 +45,18 @@ public class AuthenticationController implements AuthenticationApi {
     }
 
     @Override
+    public ResponseEntity<?> authenticateUser(String username, String password, HttpServletRequest httpServletRequest) {
+        AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
+                .username(username)
+                .password(password)
+                .build();
+        StandardResponse response = authenticationService.authenticate(authenticationRequest);
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(response.headers())
+                .body(response.body());
+    }
+
+    @Override
     public ResponseEntity<?> refreshToken(RefreshTokenRequest refreshTokenRequest) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(refreshTokenService.generateNewToken(refreshTokenRequest));

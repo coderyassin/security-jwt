@@ -47,18 +47,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         TriPredicate<String, String, HttpServletRequest> moveToNextFilter =
                 (token, header, httpRequest) -> {
-                    boolean anyMatch = List.of("/auth", "/swagger-ui/", "/swagger-ui.html", "/v3/api-docs", "/favicon.ico")
+                    boolean anyMatch = List.of("/auth", "/swagger-ui/", "/swagger-ui.html", "/v3/api-docs")
                             .stream()
                             .anyMatch(uri -> httpRequest.getRequestURI().contains(uri));
 
                     if(anyMatch) {
                         return true;
+                    } /*else if(request.getRequestURI().equals("/login")) {
+                        return false;
+                    }*/ else if(Objects.isNull(token)) {
+                        if(Objects.isNull(header) || !header.startsWith(JWT_PREFIX)) {
+                            return true;
+                        }
                     }
 
-                    if(Objects.isNull(token)) {
-                        if(Objects.isNull(header) || !header.startsWith(JWT_PREFIX))
-                            return true;
-                    }
                     return false;
                 };
 

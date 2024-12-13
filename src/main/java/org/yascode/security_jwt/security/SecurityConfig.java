@@ -55,20 +55,25 @@ public class SecurityConfig {
                                                    AuthenticationManager authManager,
                                                    CorsFilter corsFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            /*.cors(corsCustomizer -> corsCustomizer.configurationSource(costumeCorsConfigurationSource))*/
-            .authorizeHttpRequests(request ->
-                request.requestMatchers("/api/v1/auth/**").permitAll().
-                requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll().
-                requestMatchers(HttpMethod.POST,"/api/v1/resource").hasRole(RoleEnum.ADMIN.name()).
-                anyRequest().authenticated())
-            .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-            .authenticationManager(authManager)
-            .addFilterBefore(costumeCorsFilter, CorsFilter.class)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(exceptionHandling ->
-                exceptionHandling.authenticationEntryPoint(unauthorizedEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler)
-            );
+                /*.cors(corsCustomizer -> corsCustomizer.configurationSource(costumeCorsConfigurationSource))*/
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers("/api/v1/auth/**", "/login", "/css/**", "/js/**").permitAll().
+                                requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll().
+                                requestMatchers("/favicon.ico").permitAll().
+                                requestMatchers(HttpMethod.POST, "/api/v1/resource").hasRole(RoleEnum.ADMIN.name()).
+                                anyRequest().authenticated())
+                /*.formLogin(formLogin -> formLogin.loginPage("/login")
+                        *//*.loginProcessingUrl("/authenticate")*//*
+                        .failureUrl("/login?error=true")
+                        .permitAll())*/
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+                .authenticationManager(authManager)
+                .addFilterBefore(costumeCorsFilter, CorsFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(unauthorizedEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler)
+                );
         return http.build();
     }
 
