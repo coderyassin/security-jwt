@@ -27,7 +27,7 @@ public class ApplicationSecurityConfig {
     @Bean
     public UserDetailsService customUserDetailsService(){
         return username -> userRepository.findByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+                .orElseThrow(()-> new UsernameNotFoundException("User not found: " + username));
     }
 
     @Bean

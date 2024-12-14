@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.yascode.security_jwt.enums.RoleEnum;
 import org.yascode.security_jwt.security.filter.CostumeCorsFilter;
 import org.yascode.security_jwt.security.filter.JwtAuthenticationFilter;
+
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -33,6 +36,7 @@ public class SecurityConfig {
     private final MagicAuthenticationProvider magicAuthenticationProvider;
     private final Http401UnauthorizedEntryPoint unauthorizedEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     public SecurityConfig(CorsConfigurationSource costumeCorsConfigurationSource,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -40,7 +44,8 @@ public class SecurityConfig {
                           MagicAuthenticationProvider magicAuthenticationProvider,
                           Http401UnauthorizedEntryPoint unauthorizedEntryPoint,
                           CustomAccessDeniedHandler accessDeniedHandler,
-                          CostumeCorsFilter costumeCorsFilter) {
+                          CostumeCorsFilter costumeCorsFilter,
+                          CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
         this.costumeCorsConfigurationSource = costumeCorsConfigurationSource;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customAuthenticationProvider = customAuthenticationProvider;
@@ -48,6 +53,7 @@ public class SecurityConfig {
         this.unauthorizedEntryPoint = unauthorizedEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.costumeCorsFilter = costumeCorsFilter;
+        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
     }
 
     @Bean
@@ -63,8 +69,9 @@ public class SecurityConfig {
                                 requestMatchers(HttpMethod.POST, "/api/v1/resource").hasRole(RoleEnum.ADMIN.name()).
                                 anyRequest().authenticated())
                 /*.formLogin(formLogin -> formLogin.loginPage("/login")
-                        *//*.loginProcessingUrl("/authenticate")*//*
+                        //.loginProcessingUrl("/api/v1/auth/login")
                         .failureUrl("/login?error=true")
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll())*/
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationManager(authManager)
@@ -79,9 +86,11 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(magicAuthenticationProvider);
-        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
-        return authenticationManagerBuilder.build();
+        //AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        //authenticationManagerBuilder.authenticationProvider(magicAuthenticationProvider);
+        //authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
+        //return authenticationManagerBuilder.build();
+        List<AuthenticationProvider> authenticationProviders = List.of(magicAuthenticationProvider, customAuthenticationProvider);
+        return new ProviderManager(authenticationProviders);
     }
 }
