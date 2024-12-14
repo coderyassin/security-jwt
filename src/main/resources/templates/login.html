@@ -17,6 +17,7 @@
             <input type="password" id="password" name="password" required>
         </div>
         <div>
+            <input type="hidden" name="redirect_uri" th:value="${redirectUri}">
             <button type="submit">Login</button>
         </div>
         <div th:if="${param.error}">
