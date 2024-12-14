@@ -24,7 +24,7 @@ public class Http401UnauthorizedEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        if (authException instanceof BadCredentialsException && request.getRequestURI().contains("/login")) {
+        if (sendRedirectToLogin(request, authException)) {
             response.sendRedirect("/login?error=true");
         }
 
@@ -40,5 +40,12 @@ public class Http401UnauthorizedEntryPoint implements AuthenticationEntryPoint {
                 .build();
 
         objectMapper.writeValue(response.getOutputStream(), body);
+    }
+
+    boolean sendRedirectToLogin(HttpServletRequest request, AuthenticationException authException) {
+        if (authException instanceof BadCredentialsException && request.getRequestURI().contains("/login")) {
+            return request.getRequestURI().contains("/auth") ? false : true;
+        }
+        return false;
     }
 }
