@@ -21,6 +21,9 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/login")
 public class LoginController {
+    private static final String JWT_COOKIE_NAME = "jwt_cookie";
+    private static final String REFRESH_TOKEN = "refresh_token";
+    private static final String REDIRECT_URI = "redirectUri";
     private final AuthenticationService authenticationService;
 
     public LoginController(AuthenticationService authenticationService) {
@@ -28,8 +31,9 @@ public class LoginController {
     }
 
     @GetMapping
-    public String login(@RequestParam(required = false) String redirect_uri, Model model) {
-        model.addAttribute("redirectUri", redirect_uri);
+    public String login(@RequestParam(required = false) String redirect_uri,
+                        Model model) {
+        model.addAttribute(REDIRECT_URI, redirect_uri);
         return "login";
     }
 
@@ -38,19 +42,21 @@ public class LoginController {
                                               String password,
                                               @RequestParam(required = false) String redirect_uri,
                                               HttpServletResponse httpServletResponse) throws IOException {
+
         AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
                 .username(username)
                 .password(password)
                 .build();
+
         StandardResponse response = authenticationService.authenticate(authenticationRequest);
 
         if (redirect_uri != null) {
             if (response.body() instanceof AuthenticationResponse authenticationResponse) {
-                httpServletResponse.addCookie(new Cookie("jwt_cookie", authenticationResponse.getAccessToken()));
+                httpServletResponse.addCookie(new Cookie(JWT_COOKIE_NAME, authenticationResponse.getAccessToken()));
+                httpServletResponse.addCookie(new Cookie(REFRESH_TOKEN, authenticationResponse.getRefreshToken()));
                 httpServletResponse.sendRedirect(redirect_uri);
                 return null;
             }
-
         }
 
         return ResponseEntity.status(HttpStatus.OK)
