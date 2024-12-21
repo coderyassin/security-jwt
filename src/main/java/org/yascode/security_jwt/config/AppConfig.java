@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class AppConfig {
     private static final Long MAX_AGE = 3600L;
-    private static final List<String> origins = List.of("http://example.com", "http://localhost:4200");
+    private static final List<String> origins = List.of("http://localhost:4200");
 
     @Bean
     public ObjectMapper objectMapper() {
