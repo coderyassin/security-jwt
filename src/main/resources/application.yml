@@ -1,5 +1,13 @@
 server:
-  port: 6689
+  port: 443
+  http:
+    port: 6689
+  ssl:
+    enabled: true
+    key-store: classpath:ssl/keystore.p12
+    key-store-type: PKCS12
+    key-alias: myapp
+    key-store-password: yascode
   env:
     address: localhost
     request-protocol: http

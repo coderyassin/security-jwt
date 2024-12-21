@@ -66,6 +66,7 @@ public class SecurityConfig {
                         request.requestMatchers("/api/v1/auth/**", "/login", "/css/**", "/js/**").permitAll().
                                 requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll().
                                 requestMatchers("/favicon.ico").permitAll().
+                                requestMatchers("/actuator/**").permitAll().
                                 requestMatchers(HttpMethod.POST, "/api/v1/resource").hasRole(RoleEnum.ADMIN.name()).
                                 anyRequest().authenticated())
                 /*.formLogin(formLogin -> formLogin.loginPage("/login")
