@@ -16,7 +16,7 @@ spring:
   application:
     name: security-jwt
   datasource:
-    url: jdbc:postgresql://192.168.214.108:5432/banking_db
+    url: jdbc:postgresql://192.168.218.108:5432/banking_db
     username: banking
     password: 834xQqztIANjmqI7R2eBmgUT
     driver-class-name: org.postgresql.Driver

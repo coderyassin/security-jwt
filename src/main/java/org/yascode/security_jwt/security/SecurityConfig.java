@@ -7,7 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -61,19 +61,13 @@ public class SecurityConfig {
                                                    AuthenticationManager authManager,
                                                    CorsFilter corsFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                /*.cors(corsCustomizer -> corsCustomizer.configurationSource(costumeCorsConfigurationSource))*/
                 .authorizeHttpRequests(request ->
                         request.requestMatchers("/api/v1/auth/**", "/login", "/css/**", "/js/**").permitAll().
                                 requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll().
-                                requestMatchers("/favicon.ico").permitAll().
-                                requestMatchers("/actuator/**").permitAll().
+                               requestMatchers("/oauth/**", "/actuator/**", "/favicon.ico").permitAll().
                                 requestMatchers(HttpMethod.POST, "/api/v1/resource").hasRole(RoleEnum.ADMIN.name()).
                                 anyRequest().authenticated())
-                /*.formLogin(formLogin -> formLogin.loginPage("/login")
-                        //.loginProcessingUrl("/api/v1/auth/login")
-                        .failureUrl("/login?error=true")
-                        .failureHandler(customAuthenticationFailureHandler)
-                        .permitAll())*/
+                .formLogin(Customizer.withDefaults())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationManager(authManager)
                 .addFilterBefore(costumeCorsFilter, CorsFilter.class)
@@ -82,15 +76,12 @@ public class SecurityConfig {
                         exceptionHandling.authenticationEntryPoint(unauthorizedEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler)
                 );
+
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        //AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        //authenticationManagerBuilder.authenticationProvider(magicAuthenticationProvider);
-        //authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
-        //return authenticationManagerBuilder.build();
         List<AuthenticationProvider> authenticationProviders = List.of(magicAuthenticationProvider, customAuthenticationProvider);
         return new ProviderManager(authenticationProviders);
     }

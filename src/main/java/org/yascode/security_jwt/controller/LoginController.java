@@ -23,7 +23,7 @@ import java.io.IOException;
 public class LoginController {
     private static final String JWT_COOKIE_NAME = "jwt_cookie";
     private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String REDIRECT_URI = "redirectUri";
+    private static final String REDIRECT_URI = "redirect_uri";
     private final AuthenticationService authenticationService;
 
     public LoginController(AuthenticationService authenticationService) {
